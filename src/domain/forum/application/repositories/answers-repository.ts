@@ -4,4 +4,5 @@ export interface AnswersRepository {
   findById(answerId: string): Promise<Answer | null>
   create(answer: Answer): Promise<void>
   delete(answer: Answer): Promise<void>
+  edit(answer: Answer): Promise<void>
 }
