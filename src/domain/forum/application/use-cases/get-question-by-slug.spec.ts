@@ -24,12 +24,9 @@ describe('Get question by slug', () => {
     expect(question.id).toEqual(newQuestion.id)
   })
 
-  // test('If question not exists, should be throw an error', async () => {
-  //   const { question } = await sut.execute({
-  //     slug: 'question-slug',
-  //   })
-
-  //   // Deve estourar um erro
-  //   expect(question).toBeUndefined()
-  // })
+  test('If question not exists, should be throw an error', async () => {
+    expect(() => {
+      return sut.execute({ slug: 'question-slug' })
+    }).rejects.toBeInstanceOf(Error)
+  })
 })
