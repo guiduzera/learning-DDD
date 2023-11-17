@@ -9,7 +9,7 @@ export class Entity<Props> {
     this._id = id ?? new UniqueEntityID()
   }
 
-  protected get id(): UniqueEntityID {
+  get id(): UniqueEntityID {
     return this._id
   }
 }

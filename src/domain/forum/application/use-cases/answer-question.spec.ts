@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
 import { Answer } from '../../enterprise/entities/answer'
-import { AnswersRepository } from '../repositories/answersRepositorie'
+import { AnswersRepository } from '../repositories/answers-repository'
 import { AnswerQuestionUseCase } from './answer-question'
 
 const fakeAnswerQuestionRepository: AnswersRepository = {
@@ -22,6 +22,6 @@ test('create an answer', async () => {
     content: 'Answer content',
   })
 
-  expect(answer).toBeInstanceOf(Answer)
-  expect(answer.content).toBe('Answer content')
+  expect(answer.answer).toBeInstanceOf(Answer)
+  expect(answer.answer.content).toBe('Answer content')
 })
