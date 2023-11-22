@@ -27,12 +27,13 @@ describe('Fetch answer comments', () => {
       makeAnswerComment({ answerId: new UniqueEntityID('1') }),
     )
 
-    const { answerComments } = await sut.execute({
+    const result = await sut.execute({
       page: 1,
       answerId: '1',
     })
 
-    expect(answerComments).toEqual([
+    expect(result.isRight()).toBeTruthy()
+    expect(result.value?.answerComments).toEqual([
       expect.objectContaining({ answerId: new UniqueEntityID('1') }),
       expect.objectContaining({ answerId: new UniqueEntityID('1') }),
       expect.objectContaining({ answerId: new UniqueEntityID('1') }),
@@ -46,11 +47,12 @@ describe('Fetch answer comments', () => {
       )
     }
 
-    const { answerComments } = await sut.execute({
+    const result = await sut.execute({
       page: 2,
       answerId: '1',
     })
 
-    expect(answerComments).toHaveLength(10)
+    expect(result.isRight()).toBeTruthy()
+    expect(result.value?.answerComments).toHaveLength(10)
   })
 })

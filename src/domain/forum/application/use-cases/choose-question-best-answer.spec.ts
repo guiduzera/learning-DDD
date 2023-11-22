@@ -5,6 +5,8 @@ import { InMemoryAnswersRepository } from 'test/repositories/in-memory-answers-r
 import { makeAnswer } from 'test/factories/make-answer'
 import { makeQuestion } from 'test/factories/make-question'
 import { UniqueEntityID } from '../../../../core/entities/unique-entity-id'
+import { NotAllowedError } from './errors/not-allowed-error'
+import { ResourceNotFoundError } from './errors/resource-not-found-error'
 
 let inMemoryAnswersRepository: InMemoryAnswersRepository
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository
@@ -34,11 +36,12 @@ describe('Choose de best question Answer', () => {
 
     await inMemoryQuestionsRepository.create(question)
 
-    await sut.execute({
+    const result = await sut.execute({
       answerId: answer.id.toString(),
       authorId: 'author-id',
     })
 
+    expect(result.isRight()).toBeTruthy()
     expect(inMemoryQuestionsRepository.items[0].bestAnswerId).toEqual(answer.id)
   })
 
@@ -47,12 +50,13 @@ describe('Choose de best question Answer', () => {
 
     await inMemoryAnswersRepository.create(answer)
 
-    const promise = sut.execute({
+    const result = await sut.execute({
       answerId: answer.id.toString(),
       authorId: 'author-id',
     })
 
-    await expect(promise).rejects.toThrow()
+    expect(result.isLeft()).toBeTruthy()
+    expect(result.value).toBeInstanceOf(ResourceNotFoundError)
   })
 
   test('Should not be able to choose the best question answer if the answer does not exist', async () => {
@@ -65,12 +69,13 @@ describe('Choose de best question Answer', () => {
 
     await inMemoryQuestionsRepository.create(question)
 
-    const promise = sut.execute({
+    const result = await sut.execute({
       answerId: 'answer-id',
       authorId: 'author-id',
     })
 
-    await expect(promise).rejects.toThrow()
+    expect(result.isLeft()).toBeTruthy()
+    expect(result.value).toBeInstanceOf(ResourceNotFoundError)
   })
 
   test('Should not be able to choose the best question answer if the user is not the author of the question', async () => {
@@ -85,11 +90,12 @@ describe('Choose de best question Answer', () => {
     await inMemoryAnswersRepository.create(answer)
     await inMemoryQuestionsRepository.create(question)
 
-    const promise = sut.execute({
+    const result = await sut.execute({
       answerId: answer.id.toString(),
       authorId: 'another-author-id',
     })
 
-    await expect(promise).rejects.toThrow()
+    expect(result.isLeft()).toBeTruthy()
+    expect(result.value).toBeInstanceOf(NotAllowedError)
   })
 })

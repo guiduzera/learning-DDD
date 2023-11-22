@@ -27,12 +27,13 @@ describe('Fetch question answers', () => {
       makeAnswer({ questionId: new UniqueEntityID('1') }),
     )
 
-    const { answers } = await sut.execute({
+    const result = await sut.execute({
       page: 1,
       questionId: '1',
     })
 
-    expect(answers).toEqual([
+    expect(result.isRight()).toBeTruthy()
+    expect(result.value?.answers).toEqual([
       expect.objectContaining({ questionId: new UniqueEntityID('1') }),
       expect.objectContaining({ questionId: new UniqueEntityID('1') }),
       expect.objectContaining({ questionId: new UniqueEntityID('1') }),
@@ -46,11 +47,12 @@ describe('Fetch question answers', () => {
       )
     }
 
-    const { answers } = await sut.execute({
+    const result = await sut.execute({
       page: 2,
       questionId: '1',
     })
 
-    expect(answers).toHaveLength(10)
+    expect(result.isRight()).toBeTruthy()
+    expect(result.value?.answers).toHaveLength(10)
   })
 })

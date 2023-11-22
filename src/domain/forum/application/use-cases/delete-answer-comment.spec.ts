@@ -3,6 +3,8 @@ import { InMemoryAnswerCommentsRepository } from 'test/repositories/in-memory-an
 import { makeAnswerComment } from 'test/factories/make-answer-comment'
 import { DeleteAnswerCommentUseCase } from './delete-answer-comment'
 import { UniqueEntityID } from '../../../../core/entities/unique-entity-id'
+import { ResourceNotFoundError } from './errors/resource-not-found-error'
+import { NotAllowedError } from './errors/not-allowed-error'
 
 let inMemoryAnswerCommentRepository: InMemoryAnswerCommentsRepository
 let sut: DeleteAnswerCommentUseCase
@@ -23,11 +25,12 @@ describe('Delete answer comment', () => {
 
     await inMemoryAnswerCommentRepository.create(newAnswerComment)
 
-    await sut.execute({
+    const result = await sut.execute({
       answerCommentId: 'answer-comment-id',
       authorId: 'author-id',
     })
 
+    expect(result.isRight()).toBeTruthy()
     expect(inMemoryAnswerCommentRepository.items).toHaveLength(0)
   })
 
@@ -41,20 +44,22 @@ describe('Delete answer comment', () => {
 
     await inMemoryAnswerCommentRepository.create(newAnswerComment)
 
-    expect(() => {
-      return sut.execute({
-        answerCommentId: 'answer-comment-id',
-        authorId: 'author-id-2',
-      })
-    }).rejects.toBeInstanceOf(Error)
+    const result = await sut.execute({
+      answerCommentId: 'answer-comment-id',
+      authorId: 'another-author-id',
+    })
+
+    expect(result.isLeft()).toBeTruthy()
+    expect(result.value).toBeInstanceOf(NotAllowedError)
   })
 
   test('Should not be able to delete a answercomment that not exists', async () => {
-    expect(() => {
-      return sut.execute({
-        answerCommentId: 'answer-comment-id',
-        authorId: 'author-id',
-      })
-    }).rejects.toBeInstanceOf(Error)
+    const result = await sut.execute({
+      answerCommentId: 'answer-comment-id',
+      authorId: 'author-id',
+    })
+
+    expect(result.isLeft()).toBeTruthy()
+    expect(result.value).toBeInstanceOf(ResourceNotFoundError)
   })
 })
