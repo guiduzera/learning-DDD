@@ -23,7 +23,7 @@ describe('Create Question', () => {
       authorId: 'author-id',
       title: 'Question title',
       content: 'Question content',
-      AttachmentIds: ['1', '2'],
+      attachmentIds: ['1', '2'],
     })
 
     expect(result.isRight()).toBeTruthy()

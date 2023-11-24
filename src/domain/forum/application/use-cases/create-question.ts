@@ -9,7 +9,7 @@ interface CreateQuestionUseCaseRequest {
   authorId: string
   title: string
   content: string
-  AttachmentIds: string[]
+  attachmentIds: string[]
 }
 
 type CreateQuestionUseCaseResponse = Either<
@@ -26,7 +26,7 @@ export class CreateQuestionUseCase {
     authorId,
     title,
     content,
-    AttachmentIds,
+    attachmentIds,
   }: CreateQuestionUseCaseRequest): Promise<CreateQuestionUseCaseResponse> {
     const question = Question.create({
       authorId: new UniqueEntityID(authorId),
@@ -34,7 +34,7 @@ export class CreateQuestionUseCase {
       content,
     })
 
-    const questionAttachments = AttachmentIds.map((id) => {
+    const questionAttachments = attachmentIds.map((id) => {
       return QuestionAttachment.create({
         attachmentId: new UniqueEntityID(id),
         questionId: question.id,
