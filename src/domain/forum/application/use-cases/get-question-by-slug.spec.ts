@@ -29,7 +29,11 @@ describe('Get question by slug', () => {
     })
 
     expect(result.isRight()).toBeTruthy()
-    expect(newQuestion.slug.value).toEqual('question-slug')
+    expect(result.value).toMatchObject({
+      question: expect.objectContaining({
+        title: newQuestion.title,
+      }),
+    })
   })
 
   test('If question not exists, should be throw an error', async () => {
